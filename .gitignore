@@ -1,0 +1,8 @@
+# Hệ điều hành và editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Log và file tạm
+*.log
+*.tmp
