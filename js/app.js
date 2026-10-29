@@ -6,24 +6,20 @@
   const startButton = document.querySelector("#start-button");
   const continueButton = document.querySelector("#continue-button");
   const message = document.querySelector("#invitation-message");
-  const notice = document.querySelector("#next-chapter-notice");
 
-  if (!invitation || !startButton || !continueButton || !message || !notice) {
+  if (!invitation || !startButton || !continueButton || !message) {
     console.error("Không thể khởi tạo Scene 01: thiếu thành phần giao diện bắt buộc.");
     return;
   }
 
-  const state = {
-    scene: "invitation",
-    invitationOpened: false
-  };
+  let invitationOpened = false;
 
   startButton.addEventListener("click", function () {
-    if (state.invitationOpened) {
+    if (invitationOpened) {
       return;
     }
 
-    state.invitationOpened = true;
+    invitationOpened = true;
     invitation.classList.add("is-open");
     message.hidden = false;
     startButton.hidden = true;
@@ -31,7 +27,9 @@
   });
 
   continueButton.addEventListener("click", function () {
-    notice.hidden = false;
+    if (invitationOpened) {
+      document.dispatchEvent(new CustomEvent("starlit:request-gift"));
+    }
   });
 })();
  

@@ -11,13 +11,15 @@
   <script src="js/stars.js" defer></script>
   <script src="js/memories.js" defer></script>
   <script src="js/audio.js" defer></script>
+  <script src="js/scenes.js" defer></script>
+  <script src="js/gift.js" defer></script>
   <script src="js/app.js" defer></script>
 </head>
 <body>
   <canvas class="starfield" aria-hidden="true"></canvas>
   <div class="ambient-glow" aria-hidden="true"></div>
 
-  <main class="invitation" aria-labelledby="invitation-title">
+  <main class="invitation scene" aria-labelledby="invitation-title">
     <p class="eyebrow">STARLIT MEMORIES</p>
 
     <div class="envelope" aria-hidden="true">
@@ -38,12 +40,64 @@
       <button class="button button--quiet" id="continue-button" type="button" hidden>
         Tiếp tục
       </button>
-      <p class="invitation__notice" id="next-chapter-notice" role="status" hidden>
-        Chương tiếp theo đang được chuẩn bị
-      </p>
     </section>
 
     <p class="invitation__footnote">Một điều dịu dàng đang chờ được mở ra</p>
+  </main>
+
+  <main class="gift-scene scene" id="gift-scene" aria-labelledby="gift-title" hidden>
+    <p class="eyebrow">STARLIT MEMORIES</p>
+
+    <div class="gift-stage" id="gift-stage">
+      <div class="gift-aura"></div>
+      <div class="gift-box">
+        <div class="gift-box__body">
+          <div class="gift-box__ribbon"></div>
+          <div class="gift-box__front-shine"></div>
+        </div>
+        <div class="gift-box__lid">
+          <div class="gift-box__lid-ribbon"></div>
+        </div>
+        <div class="gift-bow">
+          <span class="gift-bow__loop gift-bow__loop--left"></span>
+          <span class="gift-bow__loop gift-bow__loop--right"></span>
+          <span class="gift-bow__knot"></span>
+        </div>
+        <div class="gift-sparkles">
+          <span>✦</span><span>✧</span><span>✦</span><span>✧</span>
+          <span>✦</span><span>✧</span><span>✦</span><span>✧</span>
+        </div>
+        <button class="ribbon-handle" id="ribbon-handle" type="button"
+          aria-label="Kéo đầu dải ruy băng sang phải để mở quà"
+          aria-describedby="ribbon-instructions">
+          <span class="ribbon-handle__tail"></span>
+          <span class="ribbon-handle__end"></span>
+        </button>
+      </div>
+    </div>
+
+    <section class="gift-content" aria-live="polite">
+      <h1 id="gift-title">Món quà đang chờ được mở</h1>
+      <p class="gift-instructions" id="ribbon-instructions">
+        Kéo dải ruy băng để mở món quà
+      </p>
+      <div class="pull-progress" id="pull-progress" role="progressbar"
+        aria-label="Tiến độ kéo dải ruy băng" aria-valuemin="0" aria-valuemax="100"
+        aria-valuenow="0">
+        <span class="pull-progress__fill"></span>
+      </div>
+      <button class="button button--quiet gift-open-button" id="gift-open-button" type="button">
+        Mở quà không cần kéo
+      </button>
+      <p class="gift-message" id="gift-message" role="status" hidden>
+        Có những ký ức, dù nhỏ bé, vẫn luôn tỏa sáng…
+      </p>
+      <button class="button gift-enter-button" id="gift-enter-button" type="button" hidden>
+        Bước vào bầu trời ký ức
+      </button>
+    </section>
+
+    <p class="invitation__footnote gift-footnote">Một điều dịu dàng đang chờ được mở ra</p>
   </main>
 </body>
 </html>

@@ -1,6 +1,6 @@
 # Starlit Memories
 
-Website quà sinh nhật tương tác riêng tư. Phase 01 hiện chỉ triển khai **Scene 01 — The Invitation**; các màn ký ức và nội dung tiếp theo chưa được thực hiện.
+Website quà sinh nhật tương tác riêng tư. Phase 01 triển khai **Scene 01 — The Invitation** và Phase 02 triển khai **Untie the Ribbon**; bầu trời ký ức ở Phase 03 chưa được thực hiện.
 
 ## Chạy bằng VS Code Live Server
 
@@ -13,10 +13,14 @@ Không cần cài dependency, backend hoặc build step.
 
 ## Cấu trúc
 
-- `index.html` — cấu trúc semantic của Scene 01.
+- `index.html` — cấu trúc semantic của hai cảnh.
 - `css/style.css` — giao diện đáp ứng, hiệu ứng chuyển động và chế độ giảm chuyển động.
-- `js/app.js` — trạng thái và tương tác Scene 01.
+- `js/app.js` — tương tác Scene 01.
+- `js/scenes.js` — chuyển cảnh từ lời mời sang hộp quà.
+- `js/gift.js` — state machine và thao tác kéo/mở hộp quà Scene 02.
 - `js/stars.js` — nền sao Canvas 2D.
 - `js/memories.js` — chín mục dữ liệu ký ức mẫu chưa có nội dung cá nhân.
 - `js/audio.js` — các hàm quản lý âm thanh, không tự phát nhạc.
 - `assets/` — vị trí dành cho ảnh, âm thanh và biểu tượng về sau.
+
+Phase 02 hỗ trợ kéo ruy băng bằng chuột/cảm ứng và có nút mở thay thế. Nút cuối hiển thị thông báo rằng bầu trời ký ức đang được chuẩn bị; Phase 03 chưa được triển khai. Không tự động phát nhạc.
