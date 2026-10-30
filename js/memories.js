@@ -69,4 +69,20 @@
       alt: "Ảnh tạm thời cho ký ức thứ tám: bầu trời hoàng hôn bên biển"
     }
   ];
+  window.StarlitMemories.finalWish = {
+    title: "Chúc mừng sinh nhật, Tỷ tỷ.",
+    subtitle: "",
+    message: "Nội dung lời chúc sẽ được bổ sung sau.",
+    signature: "Giữa muôn vàn vì sao, vẫn có một ánh sáng dành riêng cho Tỷ.",
+    wishes: [
+      { id: "wish-01", image: "assets/images/memory-star1.jpg", message: "Lời chúc nhỏ sẽ được bổ sung sau.", duration: 12000 },
+      { id: "wish-02", image: "assets/images/memory-sample.svg", message: "Một điều dịu dàng đang chờ được viết nên.", duration: 13000 },
+      { id: "wish-03", image: "assets/images/memory-sample.svg", message: "Lời chúc nhỏ sẽ được bổ sung sau.", duration: 14000 },
+      { id: "wish-04", image: "assets/images/memory-sample.svg", message: "Một điều dịu dàng đang chờ được viết nên.", duration: 12500 },
+      { id: "wish-05", image: "assets/images/memory-sample.svg", message: "Lời chúc nhỏ sẽ được bổ sung sau.", duration: 15000 },
+      { id: "wish-06", image: "assets/images/memory-sample.svg", message: "Một điều dịu dàng đang chờ được viết nên.", duration: 13500 },
+      { id: "wish-07", image: "assets/images/memory-sample.svg", message: "Lời chúc nhỏ sẽ được bổ sung sau.", duration: 14500 },
+      { id: "wish-08", image: "assets/images/memory-sample.svg", message: "Một điều dịu dàng đang chờ được viết nên.", duration: 13000 }
+    ]
+  };
 })();

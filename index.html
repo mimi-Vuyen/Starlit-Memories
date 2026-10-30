@@ -17,6 +17,7 @@
   <script src="js/constellation-data.js" defer></script>
   <script src="js/constellation.js" defer></script>
   <script src="js/memory-experience.js" defer></script>
+  <script src="js/final-wish.js" defer></script>
   <script src="js/scenes.js" defer></script>
   <script src="js/gift.js" defer></script>
   <script src="js/app.js" defer></script>
@@ -126,9 +127,15 @@
       </svg>
     </div>
 
-    <p class="constellation-count" id="constellation-count" role="status" aria-live="polite">
-      0 / 9 ký ức đã khám phá
-    </p>
+    <div class="constellation-discovery-tools">
+      <p class="constellation-count" id="constellation-count" role="status" aria-live="polite">
+        0 / 9 ký ức đã khám phá
+      </p>
+      <button class="constellation-next-memory button button--quiet" id="constellation-next-memory" type="button">
+        Khám phá ký ức tiếp theo
+      </button>
+      <p class="constellation-lock-status" id="constellation-lock-status" role="status" aria-live="polite"></p>
+    </div>
 
     <aside class="memory-polaroid" id="memory-polaroid" aria-labelledby="memory-title" hidden>
       <button class="memory-polaroid__close" id="memory-close-button" type="button"
@@ -190,6 +197,34 @@
         <p id="memory-message"></p>
       </div>
     </aside>
+
+    <section class="final-wish" id="final-wish" aria-labelledby="final-wish-title" hidden>
+      <div class="final-wish__controls">
+        <button class="button button--quiet" id="final-wish-replay" type="button">Xem lại lời chúc</button>
+        <button class="button button--quiet" id="final-wish-return" type="button">Trở về chòm sao</button>
+      </div>
+      <div class="final-wish__composition">
+        <div class="final-wish__sky">
+          <article class="final-wish__memory" id="final-wish-memory"
+            role="group" aria-label="Một ký ức và lời chúc đang trôi qua">
+            <img id="final-wish-memory-image" alt="">
+            <p id="final-wish-memory-message"></p>
+            <div class="final-wish__particles" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </article>
+          <div class="final-wish__static-wishes" id="final-wish-static-wishes"
+            role="group" aria-label="Các lời chúc và ký ức"></div>
+        </div>
+        <div class="final-wish__message" id="final-wish-message" aria-live="polite">
+          <p class="final-wish__subtitle" id="final-wish-subtitle" hidden></p>
+          <h2 id="final-wish-title"></h2>
+          <p class="final-wish__body" id="final-wish-body"></p>
+          <p class="final-wish__signature" id="final-wish-signature"></p>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>

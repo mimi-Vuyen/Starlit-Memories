@@ -6,6 +6,8 @@
   const panel = document.querySelector("#memory-polaroid");
   const closeButton = document.querySelector("#memory-close-button");
   const count = document.querySelector("#constellation-count");
+  const nextMemoryButton = document.querySelector("#constellation-next-memory");
+  const lockStatus = document.querySelector("#constellation-lock-status");
   const memoryTitle = document.querySelector("#memory-title");
   const memoryMessage = document.querySelector("#memory-message");
   const memoryCaption = document.querySelector(".polaroid__caption");
@@ -17,7 +19,7 @@
   const memories = window.StarlitMemories && window.StarlitMemories.memories;
   const fallbackImage = "assets/images/memory-sample.svg";
 
-  if (!scene || !panel || !closeButton || !count || !memoryTitle || !memoryMessage ||
+  if (!scene || !panel || !closeButton || !count || !nextMemoryButton || !lockStatus || !memoryTitle || !memoryMessage ||
       !memoryCaption || !memoryEyebrow || !memoryImage) {
     console.error("Không thể khởi tạo hành trình ký ức: thiếu thành phần giao diện bắt buộc.");
     return;
@@ -43,6 +45,17 @@
   }
 
   const openedMemoryIds = new Set();
+  window.StarlitMemories.memoryProgress = {
+    hasDiscovered: function (memoryId) {
+      return openedMemoryIds.has(memoryId);
+    },
+    get discoveredCount() {
+      return openedMemoryIds.size;
+    },
+    isComplete: function () {
+      return openedMemoryIds.size === 8;
+    }
+  };
   let activeStar = null;
   let activeMemory = null;
   let closeTimer = 0;
@@ -51,6 +64,7 @@
   let restoreFocusAfterClose = false;
   let edgeMotionActive = false;
   let edgeTrailMotionActive = false;
+  let lockFeedbackTimer = 0;
   const activeDustMotions = new Set();
   const openingTimers = new Set();
   const sparkleTimers = new Set();
@@ -85,7 +99,57 @@
 
   function updateMemoryCount() {
     count.textContent = openedMemoryIds.size + " / 9 ký ức đã khám phá";
+    memoriesById.forEach(function (memory, memoryId) {
+      const star = document.querySelector('[data-memory-id="' + memoryId + '"]');
+      if (!star) {
+        return;
+      }
+      const explored = openedMemoryIds.has(memoryId);
+      star.classList.toggle("is-explored", explored);
+      star.setAttribute(
+        "aria-label",
+        "Ngôi sao " + star.getAttribute("data-star-name") + ", ký ức " +
+          String(memoryId).padStart(2, "0") + (explored ? ", đã khám phá" : ", chưa khám phá")
+      );
+    });
+    updateFinalStarState();
+    lockStatus.textContent = "";
   }
+
+  function updateFinalStarState() {
+    const finalStar = document.querySelector('[data-memory-id="9"]');
+    const isUnlocked = openedMemoryIds.size === 8;
+    nextMemoryButton.hidden = isUnlocked;
+    if (!finalStar) {
+      console.error("Không thể cập nhật Star 09: không tìm thấy điểm sao tương tác.");
+      return;
+    }
+    finalStar.setAttribute("aria-disabled", String(!isUnlocked));
+    finalStar.setAttribute(
+      "aria-label",
+      isUnlocked
+        ? "Ngôi sao Lesath, lời chúc sinh nhật cuối"
+        : "Ngôi sao Lesath đang khóa. Hãy khám phá đủ 8 ký ức để mở lời chúc cuối."
+    );
+    finalStar.classList.toggle("is-unlocked", isUnlocked);
+  }
+
+  updateFinalStarState();
+
+  nextMemoryButton.addEventListener("click", function () {
+    const nextMemory = memories.find(function (memory) {
+      return !openedMemoryIds.has(memory.id);
+    });
+    if (!nextMemory) {
+      nextMemoryButton.hidden = true;
+      return;
+    }
+    if (typeof window.StarlitMemories.selectMemoryStar !== "function") {
+      console.error("Không thể mở ký ức tiếp theo: bộ điều khiển chòm sao chưa sẵn sàng.");
+      return;
+    }
+    window.StarlitMemories.selectMemoryStar(nextMemory.id);
+  });
 
   function createStarSparkles(star) {
     const namespace = "http://www.w3.org/2000/svg";
@@ -269,6 +333,30 @@
       if (activeStar === selectedStar) {
         closeMemory(false);
       }
+      return;
+    }
+
+    if (detail.memoryId === 9) {
+      closeMemory(false);
+      if (!window.StarlitMemories.memoryProgress.isComplete()) {
+        selectedStar.setAttribute("aria-pressed", "false");
+        selectedStar.classList.remove("is-selected");
+        selectedStar.classList.add("is-locked-feedback");
+        lockStatus.textContent = "Khám phá đủ 8 ký ức để mở lời chúc cuối.";
+        if (lockFeedbackTimer) {
+          window.clearTimeout(lockFeedbackTimer);
+        }
+        lockFeedbackTimer = window.setTimeout(function () {
+          selectedStar.classList.remove("is-locked-feedback");
+          lockStatus.textContent = "";
+          lockFeedbackTimer = 0;
+        }, 1400);
+        return;
+      }
+
+      document.dispatchEvent(new CustomEvent("starlit:final-wish-request", {
+        detail: { starId: detail.starId }
+      }));
       return;
     }
 
