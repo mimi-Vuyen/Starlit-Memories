@@ -718,7 +718,7 @@ h1 {
   fill: rgba(221, 207, 255, 0.34);
 }
 
-.constellation-star--memory[data-memory-id="1"].is-selected .constellation-star__glow {
+.constellation-star--memory:not([data-memory-id="9"]).is-selected .constellation-star__glow {
   animation: memory-star-bloom 1.2s ease-out;
 }
 
@@ -761,7 +761,7 @@ h1 {
   animation: memory-star-sparkle 400ms ease-out forwards;
 }
 
-.constellation-star--memory[data-memory-id="1"].is-selected .constellation-star__core {
+.constellation-star--memory:not([data-memory-id="9"]).is-selected .constellation-star__core {
   fill: #d9c8f2;
   filter: drop-shadow(0 0 9px rgba(217, 200, 242, 0.9));
 }

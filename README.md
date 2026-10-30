@@ -1,6 +1,6 @@
 # Starlit Memories
 
-Website quà sinh nhật tương tác riêng tư. Phase 01 triển khai **Scene 01 — The Invitation**, Phase 02 triển khai **Untie the Ribbon**, và Phase 03 có chòm sao Scorpius cùng trải nghiệm Polaroid cho một ký ức mẫu.
+Website quà sinh nhật tương tác riêng tư. Phase 01 triển khai **Scene 01 — The Invitation**, Phase 02 triển khai **Untie the Ribbon**, và Phase 03 có chòm sao Scorpius cùng trải nghiệm Polaroid cho các ký ức Star 01–08.
 
 ## Chạy bằng VS Code Live Server
 
@@ -21,11 +21,15 @@ Không cần cài dependency, backend hoặc build step.
 - `js/gift.js` — state machine và thao tác kéo/mở hộp quà Scene 02.
 - `js/constellation-data.js` — tọa độ sao Hipparcos và các đoạn nối Scorpius theo stick figure phương Tây của Stellarium/Skyfield.
 - `js/constellation.js` — dựng SVG, focus/keyboard và điểm sự kiện cho chín sao ký ức.
-- `js/memory-experience.js` — hiển thị và đóng Polaroid mẫu; các sao còn lại chưa có nội dung ký ức.
+- `js/memory-experience.js` — hiển thị Polaroid, tiến trình khám phá và animation dùng chung cho Star 01–08.
 - `js/stars.js` — nền sao Canvas 2D.
-- `js/memories.js` — chín mục dữ liệu ký ức mẫu chưa có nội dung cá nhân.
+- `js/memories.js` — nguồn dữ liệu duy nhất cho nội dung ký ức Star 01–08; Star 09 dành cho lời chúc cuối.
 - `js/audio.js` — các hàm quản lý âm thanh, không tự phát nhạc.
-- `assets/images/memory-sample.svg` — minh họa dọc cục bộ dùng cho Polaroid mẫu.
+- `assets/images/memory-sample.svg` — ảnh placeholder cục bộ dùng cho Star 02–08 và ảnh dự phòng khi ảnh riêng không tải được.
 - `assets/` — vị trí dành cho ảnh, âm thanh và biểu tượng về sau.
 
-Phase 02 hỗ trợ kéo ruy băng bằng chuột/cảm ứng và có nút mở thay thế. Nút cuối chuyển sang Scene 03. Tọa độ trong bản đồ là RA/Dec J2000 từ danh mục Hipparcos; đường nối theo `constellationship.fab` của [Skyfield](https://github.com/skyfielders/python-skyfield/blob/master/ci/constellationship.fab), sử dụng các đường chòm sao phương Tây của Stellarium. Chín sao chính phát sự kiện `starlit:memory-star-select`; hiện chỉ sao đầu tiên có một ký ức mẫu. Tám ký ức còn lại, Constellation Awakening, lời chúc cuối, Phase 04 và nhạc mới chưa triển khai. Không tự động phát nhạc.
+Phase 02 hỗ trợ kéo ruy băng bằng chuột/cảm ứng và có nút mở thay thế. Nút cuối chuyển sang Scene 03. Tọa độ trong bản đồ là RA/Dec J2000 từ danh mục Hipparcos; đường nối theo `constellationship.fab` của [Skyfield](https://github.com/skyfielders/python-skyfield/blob/master/ci/constellationship.fab), sử dụng các đường chòm sao phương Tây của Stellarium. Tám sao đầu có dữ liệu Polaroid; Star 09 và lời chúc cuối chưa triển khai. Không tự động phát nhạc.
+
+## Chỉnh nội dung ký ức
+
+Sửa đối tượng có ID tương ứng trong `js/memories.js`: `image` là đường dẫn tương đối từ thư mục dự án, còn `caption`, `title`, `message` và `alt` điều khiển chú thích, tiêu đề, lời nhắn và mô tả ảnh. Có thể dùng ảnh JPG, PNG, WebP hoặc SVG hợp lệ; giữ ảnh gốc và tỷ lệ hiển thị dùng `object-fit: contain`. Thay ảnh placeholder bằng đường dẫn ảnh mới, hoặc đặt ảnh mới vào `assets/images/` rồi cập nhật trường `image`. Nếu ảnh riêng không tải được, giao diện chuyển sang `assets/images/memory-sample.svg`.

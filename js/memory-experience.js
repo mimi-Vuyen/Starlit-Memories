@@ -1,4 +1,4 @@
-/* Present the single available sample memory while leaving other stars content-free. */
+/* Present Star 01-08 memories through the shared Polaroid and opening timeline. */
 (function () {
   "use strict";
 
@@ -8,25 +8,43 @@
   const count = document.querySelector("#constellation-count");
   const memoryTitle = document.querySelector("#memory-title");
   const memoryMessage = document.querySelector("#memory-message");
+  const memoryCaption = document.querySelector(".polaroid__caption");
+  const memoryEyebrow = document.querySelector(".memory-polaroid__eyebrow");
   const memoryImage = document.querySelector("#memory-image");
   const edgeOrbitMotion = document.querySelector("#memory-edge-orbit-motion");
   const edgeTrailMotion = document.querySelector("#memory-edge-trail-motion");
   const dustMotions = Array.from(document.querySelectorAll('[id^="memory-dust-motion-"]'));
-  const sampleMemory = {
-    id: 1,
-    title: "Vào một ngày mùa đông năm ấy",
-    message: "Có những buổi chiều chẳng cần điều gì đặc biệt — chỉ cần được ở cạnh nhau, nghe sóng khẽ vỗ và ngắm bầu trời chậm rãi đổi màu.",
-    image: "assets/images/memory-star1.jpg",
-    imageAlt: "Minh họa bầu trời chạng vạng bên bờ biển yên bình"
-  };
+  const memories = window.StarlitMemories && window.StarlitMemories.memories;
+  const fallbackImage = "assets/images/memory-sample.svg";
 
-  if (!scene || !panel || !closeButton || !count || !memoryTitle || !memoryMessage || !memoryImage) {
-    console.error("Không thể khởi tạo ký ức mẫu: thiếu thành phần giao diện bắt buộc.");
+  if (!scene || !panel || !closeButton || !count || !memoryTitle || !memoryMessage ||
+      !memoryCaption || !memoryEyebrow || !memoryImage) {
+    console.error("Không thể khởi tạo hành trình ký ức: thiếu thành phần giao diện bắt buộc.");
     return;
   }
 
-  let openedMemory = false;
+  if (!Array.isArray(memories)) {
+    console.error("Không thể khởi tạo ký ức: thiếu dữ liệu trong memories.js.");
+    return;
+  }
+
+  const memoriesById = new Map(memories.map(function (memory) {
+    return [memory.id, memory];
+  }));
+  const requiredMemoryFields = ["image", "caption", "title", "message", "alt"];
+  for (let memoryId = 1; memoryId <= 8; memoryId += 1) {
+    const memory = memoriesById.get(memoryId);
+    if (!memory || requiredMemoryFields.some(function (field) {
+      return typeof memory[field] !== "string" || memory[field].trim() === "";
+    })) {
+      console.error("Không thể khởi tạo ký ức " + memoryId + ": dữ liệu chưa đầy đủ.");
+      return;
+    }
+  }
+
+  const openedMemoryIds = new Set();
   let activeStar = null;
+  let activeMemory = null;
   let closeTimer = 0;
   let isClosing = false;
   let closingStar = null;
@@ -43,10 +61,31 @@
     [12, 12], [-5, 15], [-15, 5]
   ];
 
-  memoryTitle.textContent = sampleMemory.title;
-  memoryMessage.textContent = sampleMemory.message;
-  memoryImage.src = sampleMemory.image;
-  memoryImage.alt = sampleMemory.imageAlt;
+  memoryImage.addEventListener("error", function () {
+    if (!activeMemory || memoryImage.getAttribute("src") !== activeMemory.image) {
+      return;
+    }
+    if (activeMemory.image === fallbackImage) {
+      console.error("Không thể tải ảnh ký ức hoặc ảnh dự phòng:", activeMemory.image);
+      return;
+    }
+    console.warn("Không thể tải ảnh ký ức; dùng ảnh dự phòng cục bộ:", activeMemory.image);
+    memoryImage.src = fallbackImage;
+  });
+
+  function renderMemory(memory) {
+    activeMemory = memory;
+    memoryCaption.textContent = memory.caption;
+    memoryEyebrow.textContent = "KÝ ỨC " + String(memory.id).padStart(2, "0");
+    memoryTitle.textContent = memory.title;
+    memoryMessage.textContent = memory.message;
+    memoryImage.alt = memory.alt;
+    memoryImage.src = memory.image;
+  }
+
+  function updateMemoryCount() {
+    count.textContent = openedMemoryIds.size + " / 9 ký ức đã khám phá";
+  }
 
   function createStarSparkles(star) {
     const namespace = "http://www.w3.org/2000/svg";
@@ -227,17 +266,22 @@
     const selectedStar = document.querySelector('[data-star-id="' + detail.starId + '"]');
 
     if (!detail.selected) {
-      if (detail.memoryId === sampleMemory.id) {
+      if (activeStar === selectedStar) {
         closeMemory(false);
       }
       return;
     }
 
-    if (detail.memoryId !== sampleMemory.id) {
+    const memory = memoriesById.get(detail.memoryId);
+    if (!memory) {
       closeMemory(false);
       return;
     }
 
+    if (activeStar && activeStar !== selectedStar) {
+      activeStar.setAttribute("aria-pressed", "false");
+      activeStar.classList.remove("is-selected");
+    }
     cancelOpeningSequence();
     if (closeTimer) {
       window.clearTimeout(closeTimer);
@@ -247,14 +291,15 @@
     closingStar = null;
     restoreFocusAfterClose = false;
     activeStar = selectedStar;
+    renderMemory(memory);
     panel.hidden = false;
     panel.classList.remove("is-closing");
     scene.classList.add("has-memory-open");
     startOpeningSequence(selectedStar);
 
-    if (!openedMemory) {
-      openedMemory = true;
-      count.textContent = "1 / 9 ký ức đã khám phá";
+    if (!openedMemoryIds.has(memory.id)) {
+      openedMemoryIds.add(memory.id);
+      updateMemoryCount();
     }
 
     closeButton.focus({ preventScroll: true });
