@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" role="img" aria-labelledby="title description">
+  <title id="title">Một chiều bình yên bên bờ biển</title>
+  <desc id="description">Minh họa bầu trời xanh tím lúc hoàng hôn, mặt trời lavender và mặt biển lặng.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#151a3c"/>
+      <stop offset=".48" stop-color="#554b83"/>
+      <stop offset=".76" stop-color="#c08eb7"/>
+      <stop offset="1" stop-color="#f0b89f"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#75688f"/>
+      <stop offset="1" stop-color="#202943"/>
+    </linearGradient>
+    <linearGradient id="reflection" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4d0c4" stop-opacity=".75"/>
+      <stop offset="1" stop-color="#f4d0c4" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="sunGlow">
+      <stop offset="0" stop-color="#ffd8c5" stop-opacity=".72"/>
+      <stop offset="1" stop-color="#ffd8c5" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="800" fill="url(#sky)"/>
+  <circle cx="305" cy="425" r="155" fill="url(#sunGlow)"/>
+  <circle cx="305" cy="431" r="57" fill="#f3c7b9"/>
+  <path d="M0 495c82-19 139 5 216-4 90-10 161-28 249-8 56 13 92 8 135-3v320H0Z" fill="url(#water)"/>
+  <path d="M275 489h62l87 311H205Z" fill="url(#reflection)" opacity=".55"/>
+  <path d="M0 530c82-12 139 8 224-2s149-23 224-8 103 11 152-1" fill="none" stroke="#f4d4d0" stroke-opacity=".42" stroke-width="3"/>
+  <path d="M31 592c69-8 113 8 174 1m87 12c76-7 130-4 184 4m-409 45c81-5 138 8 206 4m98-18c54-5 91 2 142 6m-274 67c69-6 133 5 193 1" fill="none" stroke="#d7c7df" stroke-opacity=".32" stroke-width="3" stroke-linecap="round"/>
+  <path d="M0 410c74-23 136-19 198-7m222-15c63-16 114-12 180 5" fill="none" stroke="#f5d2d3" stroke-opacity=".12" stroke-width="2"/>
+  <g fill="#f2e7ff" opacity=".8">
+    <circle cx="84" cy="142" r="2"/><circle cx="178" cy="216" r="1.6"/>
+    <circle cx="473" cy="128" r="2"/><circle cx="418" cy="248" r="1.5"/>
+    <circle cx="122" cy="302" r="1.4"/><circle cx="527" cy="337" r="1.7"/>
+    <circle cx="355" cy="105" r="1.4"/><circle cx="244" cy="171" r="1.2"/>
+  </g>
+  <path d="M0 756c86-29 170-18 254 9 99 32 236 23 346-21v56H0Z" fill="#171d31" opacity=".74"/>
+</svg>

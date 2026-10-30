@@ -7,10 +7,16 @@
   <meta name="description" content="Một món quà sinh nhật nhỏ đang đợi Tỷ.">
   <title>Starlit Memories — Một món quà nhỏ</title>
   <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/stars.js" defer></script>
   <script src="js/memories.js" defer></script>
   <script src="js/audio.js" defer></script>
+  <script src="js/constellation-data.js" defer></script>
+  <script src="js/constellation.js" defer></script>
+  <script src="js/memory-experience.js" defer></script>
   <script src="js/scenes.js" defer></script>
   <script src="js/gift.js" defer></script>
   <script src="js/app.js" defer></script>
@@ -98,6 +104,96 @@
     </section>
 
     <p class="invitation__footnote gift-footnote">Một điều dịu dàng đang chờ được mở ra</p>
+  </main>
+
+  <main class="constellation-scene scene" id="constellation-scene"
+    aria-labelledby="constellation-title" hidden>
+    <header class="constellation-header">
+      <p class="eyebrow">PHASE 03 · SCORPIUS</p>
+      <h1 id="constellation-title">Những vì sao lưu giữ ký ức</h1>
+      <p class="constellation-subtitle">Chạm vào một ngôi sao để bắt đầu hành trình.</p>
+    </header>
+
+    <div class="constellation-art" id="constellation-art">
+      <svg class="constellation-map" id="constellation-map" viewBox="0 0 1000 700"
+        role="group" aria-labelledby="constellation-map-title constellation-map-description">
+        <title id="constellation-map-title">Chòm sao Scorpius</title>
+        <desc id="constellation-map-description">
+          Bản đồ sao Scorpius với Antares màu đỏ ấm và chín điểm sao ký ức có thể chọn.
+        </desc>
+        <g class="constellation-lines" id="constellation-lines" aria-hidden="true"></g>
+        <g class="constellation-stars" id="constellation-stars"></g>
+      </svg>
+    </div>
+
+    <p class="constellation-count" id="constellation-count" role="status" aria-live="polite">
+      0 / 9 ký ức đã khám phá
+    </p>
+
+    <aside class="memory-polaroid" id="memory-polaroid" aria-labelledby="memory-title" hidden>
+      <button class="memory-polaroid__close" id="memory-close-button" type="button"
+        aria-label="Đóng ký ức và trở về chòm sao">
+        <span aria-hidden="true">×</span>
+      </button>
+      <figure class="polaroid">
+        <span class="polaroid__image-frame">
+          <img class="polaroid__image" id="memory-image" src="assets/images/memory-star1.jpg"
+            alt="Minh họa bầu trời chạng vạng bên bờ biển yên bình">
+        </span>
+        <figcaption class="polaroid__caption">Một khoảnh khắc dịu dàng</figcaption>
+        <svg class="polaroid__edge-orbit" viewBox="0 0 100 100" preserveAspectRatio="none"
+          role="presentation" focusable="false" aria-hidden="true">
+          <path id="memory-edge-orbit-path"
+            d="M6 1 H94 Q99 1 99 6 V94 Q99 99 94 99 H6 Q1 99 1 94 V6 Q1 1 6 1"></path>
+          <path class="polaroid__edge-trail" pathLength="1000"
+            d="M6 1 H94 Q99 1 99 6 V94 Q99 99 94 99 H6 Q1 99 1 94 V6 Q1 1 6 1">
+            <animate id="memory-edge-trail-motion" attributeName="stroke-dashoffset"
+              from="0" to="-1000" dur="1.6s" begin="indefinite" fill="freeze"></animate>
+          </path>
+          <circle class="polaroid__edge-light" r="2.8">
+            <animateMotion id="memory-edge-orbit-motion" dur="1.6s" begin="indefinite"
+              rotate="auto" fill="freeze">
+              <mpath href="#memory-edge-orbit-path"></mpath>
+            </animateMotion>
+          </circle>
+        </svg>
+        <svg class="polaroid__stardust" viewBox="0 0 100 100" preserveAspectRatio="none"
+          role="presentation" focusable="false" aria-hidden="true">
+          <path id="memory-dust-path-1" d="M2 28 Q-3 25 -5 19"></path>
+          <path id="memory-dust-path-2" d="M98 39 Q103 35 105 28"></path>
+          <path id="memory-dust-path-3" d="M18 1 Q15 -4 20 -8"></path>
+          <path id="memory-dust-path-4" d="M83 99 Q88 104 94 101"></path>
+          <circle class="polaroid__dust-light" r="1.1">
+            <animateMotion id="memory-dust-motion-1" dur="1.2s" begin="indefinite" fill="freeze">
+              <mpath href="#memory-dust-path-1"></mpath>
+            </animateMotion>
+          </circle>
+          <circle class="polaroid__dust-light" r="0.9">
+            <animateMotion id="memory-dust-motion-2" dur="1.2s" begin="indefinite" fill="freeze">
+              <mpath href="#memory-dust-path-2"></mpath>
+            </animateMotion>
+          </circle>
+          <circle class="polaroid__dust-light" r="1">
+            <animateMotion id="memory-dust-motion-3" dur="1.2s" begin="indefinite" fill="freeze">
+              <mpath href="#memory-dust-path-3"></mpath>
+            </animateMotion>
+          </circle>
+          <circle class="polaroid__dust-light" r="1">
+            <animateMotion id="memory-dust-motion-4" dur="1.2s" begin="indefinite" fill="freeze">
+              <mpath href="#memory-dust-path-4"></mpath>
+            </animateMotion>
+          </circle>
+        </svg>
+      </figure>
+      <div class="memory-polaroid__story">
+        <p class="memory-polaroid__eyebrow">KÝ ỨC 01</p>
+        <h2 id="memory-title">Vào một ngày mùa đông năm ấy</h2>
+        <p id="memory-message">
+          Có những buổi chiều chẳng cần điều gì đặc biệt — chỉ cần được ở cạnh nhau,
+          nghe sóng khẽ vỗ và ngắm bầu trời chậm rãi đổi màu.
+        </p>
+      </div>
+    </aside>
   </main>
 </body>
 </html>

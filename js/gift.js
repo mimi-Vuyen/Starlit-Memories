@@ -120,9 +120,7 @@
 
   enterButton.addEventListener("click", function () {
     if (state === "gift-opened") {
-      enterButton.textContent = "Bầu trời ký ức đang được chuẩn bị";
-      enterButton.disabled = true;
-      enterButton.setAttribute("aria-live", "polite");
+      document.dispatchEvent(new CustomEvent("starlit:request-constellation"));
     }
   });
 
