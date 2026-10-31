@@ -7,6 +7,7 @@
   const closeButton = document.querySelector("#memory-close-button");
   const count = document.querySelector("#constellation-count");
   const nextMemoryButton = document.querySelector("#constellation-next-memory");
+  const finalWishButton = document.querySelector("#constellation-final-wish");
   const lockStatus = document.querySelector("#constellation-lock-status");
   const memoryTitle = document.querySelector("#memory-title");
   const memoryMessage = document.querySelector("#memory-message");
@@ -19,8 +20,8 @@
   const memories = window.StarlitMemories && window.StarlitMemories.memories;
   const fallbackImage = "assets/images/memory-sample.svg";
 
-  if (!scene || !panel || !closeButton || !count || !nextMemoryButton || !lockStatus || !memoryTitle || !memoryMessage ||
-      !memoryCaption || !memoryEyebrow || !memoryImage) {
+  if (!scene || !panel || !closeButton || !count || !nextMemoryButton || !finalWishButton ||
+      !lockStatus || !memoryTitle || !memoryMessage || !memoryCaption || !memoryEyebrow || !memoryImage) {
     console.error("Không thể khởi tạo hành trình ký ức: thiếu thành phần giao diện bắt buộc.");
     return;
   }
@@ -33,6 +34,17 @@
   const memoriesById = new Map(memories.map(function (memory) {
     return [memory.id, memory];
   }));
+  const starsByMemoryId = new Map(
+    Array.from(scene.querySelectorAll(".constellation-star[data-memory-id]")).map(function (star) {
+      return [Number(star.getAttribute("data-memory-id")), star];
+    })
+  );
+  for (let memoryId = 1; memoryId <= 9; memoryId += 1) {
+    if (!starsByMemoryId.has(memoryId)) {
+      console.error("Không thể khởi tạo ánh xạ sao: thiếu Star " + String(memoryId).padStart(2, "0") + ".");
+      return;
+    }
+  }
   const requiredMemoryFields = ["image", "caption", "title", "message", "alt"];
   for (let memoryId = 1; memoryId <= 8; memoryId += 1) {
     const memory = memoriesById.get(memoryId);
@@ -120,6 +132,8 @@
     const finalStar = document.querySelector('[data-memory-id="9"]');
     const isUnlocked = openedMemoryIds.size === 8;
     nextMemoryButton.hidden = isUnlocked;
+    finalWishButton.hidden = !isUnlocked;
+    finalWishButton.classList.toggle("is-unlocked", isUnlocked);
     if (!finalStar) {
       console.error("Không thể cập nhật Star 09: không tìm thấy điểm sao tương tác.");
       return;
@@ -149,6 +163,18 @@
       return;
     }
     window.StarlitMemories.selectMemoryStar(nextMemory.id);
+  });
+
+  finalWishButton.addEventListener("click", function () {
+    if (!window.StarlitMemories.memoryProgress.isComplete()) {
+      updateFinalStarState();
+      return;
+    }
+    if (typeof window.StarlitMemories.selectMemoryStar !== "function") {
+      console.error("Không thể mở lời chúc cuối: bộ điều khiển chòm sao chưa sẵn sàng.");
+      return;
+    }
+    window.StarlitMemories.selectMemoryStar(9);
   });
 
   function createStarSparkles(star) {
@@ -289,6 +315,7 @@
     isClosing = false;
     panel.hidden = true;
     panel.classList.remove("is-closing");
+    updateFinalStarState();
 
     if (restoreFocusAfterClose && closingStar && closingStar.isConnected) {
       closingStar.focus({ preventScroll: true });
@@ -327,7 +354,12 @@
 
   document.addEventListener("starlit:memory-star-select", function (event) {
     const detail = event.detail;
-    const selectedStar = document.querySelector('[data-star-id="' + detail.starId + '"]');
+    const memoryId = Number(detail && detail.memoryId);
+    const selectedStar = starsByMemoryId.get(memoryId);
+    if (!selectedStar || Number(selectedStar.dataset.starId) !== Number(detail.starId)) {
+      console.error("Bỏ qua sự kiện chọn sao có ánh xạ không hợp lệ:", detail);
+      return;
+    }
 
     if (!detail.selected) {
       if (activeStar === selectedStar) {
@@ -336,7 +368,7 @@
       return;
     }
 
-    if (detail.memoryId === 9) {
+    if (memoryId === 9) {
       closeMemory(false);
       if (!window.StarlitMemories.memoryProgress.isComplete()) {
         selectedStar.setAttribute("aria-pressed", "false");
@@ -360,7 +392,7 @@
       return;
     }
 
-    const memory = memoriesById.get(detail.memoryId);
+    const memory = memoriesById.get(memoryId);
     if (!memory) {
       closeMemory(false);
       return;

@@ -1,4 +1,4 @@
-/* Orchestrate Star 09 and its looping, data-driven memory sky. */
+/* Orchestrate Star 09 and its independent, looping final wishes. */
 (function () {
   "use strict";
 
@@ -10,33 +10,19 @@
   const subtitle = document.querySelector("#final-wish-subtitle");
   const message = document.querySelector("#final-wish-body");
   const signature = document.querySelector("#final-wish-signature");
-  const floatingCard = document.querySelector("#final-wish-memory");
   const staticWishes = document.querySelector("#final-wish-static-wishes");
   const floatingSky = document.querySelector(".final-wish__sky");
-  const memories = window.StarlitMemories && window.StarlitMemories.memories;
   const content = window.StarlitMemories && window.StarlitMemories.finalWish;
-  const fallbackImage = "assets/images/memory-sample.svg";
   const floatingConfig = {
     spawnInterval: 1000,
-    defaultDuration: 14000,
-    minDuration: 12000,
-    maxDuration: 16000,
-    desktopMaxConcurrent: 6,
-    mobileMaxConcurrent: 3,
+    defaultDuration: 7000,
+    minDuration: 6000,
+    maxDuration: 8000,
+    desktopMaxConcurrent: 3,
+    mobileMaxConcurrent: 2,
     mobileBreakpoint: 760,
-    desktopLanes: [
-      { id: "desktop-left-low", x: "10%", bottom: "1%", offset: "-12px" },
-      { id: "desktop-left-high", x: "25%", bottom: "15%", offset: "10px" },
-      { id: "desktop-center-left", x: "42%", bottom: "3%", offset: "-8px" },
-      { id: "desktop-center-right", x: "58%", bottom: "14%", offset: "9px" },
-      { id: "desktop-right-high", x: "75%", bottom: "2%", offset: "-10px" },
-      { id: "desktop-right-low", x: "90%", bottom: "16%", offset: "12px" }
-    ],
-    mobileLanes: [
-      { id: "mobile-left", x: "17%", bottom: "2%", offset: "-5px" },
-      { id: "mobile-center", x: "50%", bottom: "7%", offset: "4px" },
-      { id: "mobile-right", x: "83%", bottom: "3%", offset: "-4px" }
-    ]
+    safeMargin: 14,
+    cardGap: 18
   };
   const timers = new Set();
   const awakeningTimers = new Set();
@@ -62,8 +48,7 @@
   }
 
   if (!scene || !wish || !replayButton || !returnButton || !title || !subtitle ||
-      !message || !signature || !floatingCard ||
-      !staticWishes || !floatingSky || !Array.isArray(memories) || !content) {
+      !message || !signature || !staticWishes || !floatingSky || !content) {
     console.error("Không thể khởi tạo lời chúc cuối: thiếu cấu hình hoặc thành phần giao diện.");
     return;
   }
@@ -86,14 +71,26 @@
 
   const normalizedWishes = [];
   const wishIds = new Set();
-  const memoriesByImage = new Map(memories.map(function (memory) {
-    return [memory.image, memory];
-  }));
+
+  function getDuration(value, id) {
+    let duration = floatingConfig.defaultDuration;
+    if (value !== undefined) {
+      if (Number.isFinite(value) && value > 0) {
+        duration = Math.min(
+          floatingConfig.maxDuration,
+          Math.max(floatingConfig.minDuration, value)
+        );
+      } else {
+        console.warn("Thời lượng lời chúc không hợp lệ; dùng thời lượng mặc định:", id);
+      }
+    }
+    return duration;
+  }
 
   content.wishes.forEach(function (entry, index) {
     if (!entry || (typeof entry.id !== "string" && typeof entry.id !== "number") ||
         String(entry.id).trim() === "" || wishIds.has(String(entry.id))) {
-      console.warn("Bỏ qua lời chúc có ID thiếu hoặc trùng lặp tại vị trí " + (index + 1) + ".");
+      console.warn("Bỏ qua lời chúc có ID thiếu tại vị trí " + (index + 1) + ".");
       return;
     }
     if (typeof entry.message !== "string" || entry.message.trim() === "") {
@@ -101,37 +98,12 @@
       return;
     }
 
-    wishIds.add(String(entry.id));
-    const memoryFallback = memories[index % Math.max(1, memories.length)];
-    let image = typeof entry.image === "string" && entry.image.trim()
-      ? entry.image.trim()
-      : memoryFallback && memoryFallback.image;
-    if (!image) {
-      image = fallbackImage;
-    }
-
-    let duration = floatingConfig.defaultDuration;
-    if (entry.duration !== undefined) {
-      if (Number.isFinite(entry.duration) &&
-          entry.duration >= floatingConfig.minDuration &&
-          entry.duration <= floatingConfig.maxDuration) {
-        duration = entry.duration;
-      } else {
-        console.warn("Thời lượng lời chúc không hợp lệ; dùng thời lượng mặc định:", entry.id);
-      }
-    }
-
-    const imageMemory = memoriesByImage.get(image);
-    const imageAlt = memoryFallback && memoryFallback.image === image
-      ? memoryFallback.alt
-      : imageMemory && imageMemory.alt;
+    const id = String(entry.id);
+    wishIds.add(id);
     normalizedWishes.push({
-      id: String(entry.id),
-      image: image,
-      fallbackImage: memoryFallback ? memoryFallback.image : fallbackImage,
-      alt: imageAlt || "Ảnh minh họa cho một lời chúc sinh nhật",
+      id: id,
       message: entry.message.trim(),
-      duration: duration
+      duration: getDuration(entry.duration, id)
     });
   });
 
@@ -139,11 +111,8 @@
     console.warn("Danh sách lời chúc trống hoặc không hợp lệ; dùng nội dung thay thế an toàn.");
     normalizedWishes.push({
       id: "wish-placeholder",
-      image: fallbackImage,
-      fallbackImage: fallbackImage,
-      alt: "Ảnh minh họa cho một lời chúc sinh nhật",
       message: "Lời chúc sẽ được bổ sung sau.",
-      duration: 12000
+      duration: floatingConfig.defaultDuration
     });
   }
 
@@ -153,38 +122,12 @@
   message.textContent = content.message;
   signature.textContent = content.signature;
 
-  function setImageSource(image, wishEntry, allowMemoryFallback) {
-    image.alt = wishEntry.alt;
-    image.onerror = function () {
-      image.onerror = null;
-      const currentSource = image.getAttribute("src");
-      const nextSource = allowMemoryFallback && wishEntry.fallbackImage !== currentSource
-        ? wishEntry.fallbackImage
-        : fallbackImage;
-      if (currentSource === fallbackImage || nextSource === currentSource) {
-        console.error("Không thể tải ảnh lời chúc hoặc ảnh dự phòng:", currentSource);
-        return;
-      }
-      console.warn("Không thể tải ảnh lời chúc; dùng ảnh dự phòng cục bộ:", currentSource);
-      image.src = nextSource;
-    };
-    image.src = wishEntry.image;
-  }
-
-  function createStaticWish(wishEntry, index) {
-    const figure = document.createElement("figure");
-    const image = document.createElement("img");
-    const wishMessage = document.createElement("figcaption");
-    figure.className = "final-wish__static-item";
-    figure.style.setProperty("--static-index", String(index));
-    setImageSource(image, wishEntry, true);
-    wishMessage.textContent = wishEntry.message;
-    figure.append(image, wishMessage);
-    return figure;
-  }
-
-  normalizedWishes.forEach(function (wishEntry, index) {
-    staticWishes.appendChild(createStaticWish(wishEntry, index));
+  normalizedWishes.forEach(function (wishEntry) {
+    const item = document.createElement("p");
+    item.className = "final-wish__static-item";
+    item.setAttribute("role", "listitem");
+    item.textContent = wishEntry.message;
+    staticWishes.appendChild(item);
   });
 
   function schedule(callback, delay) {
@@ -211,11 +154,11 @@
     nextSpawnAt = 0;
     spawnDelayRemaining = 0;
     queuedWishIndex = null;
+    queuedCount = 0;
     activeCards.forEach(function (laneId, card) {
       card.remove();
       activeCards.delete(card);
     });
-    floatingCard.classList.remove("is-floating");
     updateFloatingStats();
   }
 
@@ -246,6 +189,7 @@
     scene.classList.remove("has-memory-open");
     finalStar.setAttribute("aria-pressed", "false");
     finalStar.classList.remove("is-selected");
+    document.dispatchEvent(new CustomEvent("starlit:final-wish-close"));
     if (restoreFocus) {
       finalStar.focus({ preventScroll: true });
     }
@@ -268,18 +212,9 @@
     });
   }
 
-  function getLanes() {
-    return window.innerWidth <= floatingConfig.mobileBreakpoint
-      ? floatingConfig.mobileLanes
-      : floatingConfig.desktopLanes;
-  }
-
   function getMaxConcurrent() {
     const mobile = window.innerWidth <= floatingConfig.mobileBreakpoint;
-    const configuredLimit = mobile
-      ? floatingConfig.mobileMaxConcurrent
-      : floatingConfig.desktopMaxConcurrent;
-    return Math.max(1, Math.min(configuredLimit, getLanes().length));
+    return mobile ? floatingConfig.mobileMaxConcurrent : floatingConfig.desktopMaxConcurrent;
   }
 
   function scheduleNextSpawn(delay) {
@@ -296,46 +231,132 @@
     }, delay);
   }
 
-  function chooseLane() {
-    const occupied = new Set(activeCards.values());
-    return getLanes().find(function (lane) {
-      return !occupied.has(lane.id);
-    }) || null;
+  function intersects(first, second, gap) {
+    return first.left < second.right + gap &&
+      first.right + gap > second.left &&
+      first.top < second.bottom + gap &&
+      first.bottom + gap > second.top;
   }
 
-  function spawnWish(index, lane) {
+  function findSafePosition(card) {
+    const stage = floatingSky.getBoundingClientRect();
+    const cardWidth = card.offsetWidth;
+    const cardHeight = card.offsetHeight;
+    const margin = floatingConfig.safeMargin;
+    const minX = cardWidth / 2 + margin;
+    const maxX = stage.width - cardWidth / 2 - margin;
+    const minY = margin;
+    const maxY = stage.height - cardHeight - margin - 28;
+    if (maxX < minX || maxY < minY) {
+      return null;
+    }
+
+    const obstacles = [];
+    [message.parentElement, document.querySelector(".final-wish__controls")].forEach(function (element) {
+      if (!element || element.hidden) {
+        return;
+      }
+      const rect = element.getBoundingClientRect();
+      if (rect.width && rect.height) {
+        obstacles.push({
+          left: rect.left - stage.left,
+          top: rect.top - stage.top,
+          right: rect.right - stage.left,
+          bottom: rect.bottom - stage.top
+        });
+      }
+    });
+    activeCards.forEach(function (laneId, activeCard) {
+      const rect = activeCard.getBoundingClientRect();
+      obstacles.push({
+        left: rect.left - stage.left,
+        top: rect.top - stage.top,
+        right: rect.right - stage.left,
+        bottom: rect.bottom - stage.top
+      });
+    });
+
+    const xStep = Math.max(cardWidth * 0.72, 72);
+    const yStep = cardHeight + floatingConfig.cardGap;
+    const xPositions = [minX];
+    for (let x = minX + xStep; x < maxX; x += xStep) {
+      xPositions.push(x);
+    }
+    if (maxX > minX) {
+      xPositions.push(maxX);
+    }
+    const yPositions = [];
+    for (let y = maxY; y >= minY; y -= yStep) {
+      yPositions.push(y);
+    }
+    if (yPositions.length === 0 || yPositions[yPositions.length - 1] > minY) {
+      yPositions.push(minY);
+    }
+
+    for (let row = 0; row < yPositions.length; row += 1) {
+      for (let column = 0; column < xPositions.length; column += 1) {
+        const x = xPositions[(column + row) % xPositions.length];
+        const y = yPositions[row];
+        const bounds = {
+          left: x - cardWidth / 2,
+          top: y,
+          right: x + cardWidth / 2,
+          bottom: y + cardHeight + 28
+        };
+        if (obstacles.every(function (obstacle) {
+          return !intersects(bounds, obstacle, floatingConfig.cardGap / 2);
+        })) {
+          return { x: x, y: y };
+        }
+      }
+    }
+    return null;
+  }
+
+  function spawnWish(index) {
     const wishEntry = normalizedWishes[index];
-    const card = floatingCard.cloneNode(true);
-    const image = card.querySelector("img");
-    const wishText = card.querySelector("p");
-    const particleLayer = card.querySelector(".final-wish__particles");
+    const card = document.createElement("p");
     const duration = wishEntry.duration;
-    card.removeAttribute("id");
-    card.setAttribute("aria-label", "Ký ức và lời chúc: " + wishEntry.message);
+    card.className = "final-wish__floating-wish";
+    card.setAttribute("aria-hidden", "true");
     card.dataset.wishId = wishEntry.id;
     card.style.setProperty("--wish-duration", duration + "ms");
-    card.style.setProperty("--wish-dissolve-delay", Math.round(duration * 0.78) + "ms");
-    card.style.setProperty("--wish-lane-x", lane.x);
-    card.style.setProperty("--wish-lane-bottom", lane.bottom);
-    card.style.setProperty("--wish-path-offset", lane.offset);
-    image.removeAttribute("id");
-    wishText.removeAttribute("id");
-    setImageSource(image, wishEntry, true);
-    wishText.textContent = wishEntry.message;
-    particleLayer.setAttribute("aria-hidden", "true");
+    card.textContent = wishEntry.message;
 
+    floatingSky.appendChild(card);
+    const position = findSafePosition(card);
+    if (!position) {
+      card.remove();
+      return false;
+    }
+    card.style.left = position.x + "px";
+    card.style.top = position.y + "px";
     card.addEventListener("animationend", function (event) {
       if (event.target === card &&
-          (event.animationName === "wish-memory-drift" ||
-            event.animationName === "wish-memory-drift-mobile")) {
+          event.animationName === "wish-text-drift") {
         removeFloatingCard(card);
       }
     });
-    activeCards.set(card, lane.id);
+    activeCards.set(card, true);
     maxObservedConcurrent = Math.max(maxObservedConcurrent, activeCards.size);
-    floatingSky.appendChild(card);
     card.classList.add("is-floating");
     updateFloatingStats();
+    return true;
+  }
+
+  function spawnQueuedWish() {
+    if (queuedCount === 0 || activeCards.size >= getMaxConcurrent()) {
+      return false;
+    }
+    if (!spawnWish(queuedWishIndex)) {
+      return false;
+    }
+    queuedCount -= 1;
+    queuedWishIndex = queuedCount === 0
+      ? null
+      : (queuedWishIndex + 1) % normalizedWishes.length;
+    updateFloatingStats();
+    return true;
   }
 
   function removeFloatingCard(card) {
@@ -348,32 +369,30 @@
     if (!active || !loopActive || document.hidden) {
       return;
     }
-    if (queuedWishIndex !== null && activeCards.size < getMaxConcurrent()) {
-      const queuedIndex = queuedWishIndex;
-      queuedWishIndex = null;
-      spawnWish(queuedIndex, chooseLane());
-      scheduleNextSpawn(floatingConfig.spawnInterval);
+    if (queuedCount > 0 && activeCards.size < getMaxConcurrent()) {
+      if (spawnQueuedWish()) {
+        scheduleNextSpawn(floatingConfig.spawnInterval);
+      }
     }
+  }
+
+  function queueWish(index) {
+    if (queuedCount === 0) {
+      queuedWishIndex = index;
+    }
+    queuedCount += 1;
+    updateFloatingStats();
   }
 
   function requestNextWish() {
     if (!active || !loopActive || motionPreference.matches || document.hidden) {
       return;
     }
-    const lane = activeCards.size < getMaxConcurrent() ? chooseLane() : null;
-    if (!lane) {
-      if (queuedWishIndex === null) {
-        queuedWishIndex = nextWishIndex;
-        nextWishIndex = (nextWishIndex + 1) % normalizedWishes.length;
-        queuedCount += 1;
-        updateFloatingStats();
-      }
-      return;
-    }
-
     const wishIndex = nextWishIndex;
     nextWishIndex = (nextWishIndex + 1) % normalizedWishes.length;
-    spawnWish(wishIndex, lane);
+    if (queuedCount > 0 || activeCards.size >= getMaxConcurrent() || !spawnWish(wishIndex)) {
+      queueWish(wishIndex);
+    }
     scheduleNextSpawn(floatingConfig.spawnInterval);
   }
 
@@ -405,10 +424,7 @@
     if (!loopActive || document.hidden) {
       return;
     }
-    if (queuedWishIndex !== null && activeCards.size < getMaxConcurrent()) {
-      const queuedIndex = queuedWishIndex;
-      queuedWishIndex = null;
-      spawnWish(queuedIndex, chooseLane());
+    if (queuedCount > 0 && activeCards.size < getMaxConcurrent() && spawnQueuedWish()) {
       scheduleNextSpawn(floatingConfig.spawnInterval);
       return;
     }

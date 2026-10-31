@@ -47,6 +47,7 @@
       return;
     }
 
+    document.dispatchEvent(new CustomEvent("starlit:gift-opened"));
     activePointerId = null;
     setPullAmount(pullDistance);
     setState("ribbon-unwrapped");
@@ -63,7 +64,7 @@
       }
       setState("gift-opened");
       stage.classList.add("is-open");
-      title.textContent = "Một món quà nhỏ dành riêng cho Tỷ";
+      title.textContent = "Một bầu trời dành riêng cho Tỷ";
       message.hidden = false;
       enterButton.hidden = false;
       enterButton.focus({ preventScroll: true });

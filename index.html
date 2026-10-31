@@ -25,6 +25,10 @@
 <body>
   <canvas class="starfield" aria-hidden="true"></canvas>
   <div class="ambient-glow" aria-hidden="true"></div>
+  <button class="music-toggle" id="music-toggle" type="button" aria-label="Tắt nhạc nền"
+    aria-pressed="false" title="Tắt nhạc nền">
+    <span class="music-toggle__icon" aria-hidden="true">♫</span>
+  </button>
 
   <main class="invitation scene" aria-labelledby="invitation-title">
     <p class="eyebrow">STARLIT MEMORIES</p>
@@ -39,9 +43,9 @@
     </div>
 
     <section class="invitation__content" aria-live="polite">
-      <h1 id="invitation-title">Có một món quà nhỏ đang đợi Tỷ...</h1>
+      <h1 id="invitation-title">Những ngôi sao vẫn luôn tỏa sáng</h1>
       <p class="invitation__message" id="invitation-message" hidden>
-        Một hành trình nhỏ, dành riêng cho Tỷ.
+        Có một bầu trời ký ức, dành riêng cho Tỷ.
       </p>
       <button class="button" id="start-button" type="button">Chạm để bắt đầu</button>
       <button class="button button--quiet" id="continue-button" type="button" hidden>
@@ -49,7 +53,7 @@
       </button>
     </section>
 
-    <p class="invitation__footnote">Một điều dịu dàng đang chờ được mở ra</p>
+    <p class="invitation__footnote">Những ngôi sao đang chờ được thắp sáng.</p>
   </main>
 
   <main class="gift-scene scene" id="gift-scene" aria-labelledby="gift-title" hidden>
@@ -84,7 +88,7 @@
     </div>
 
     <section class="gift-content" aria-live="polite">
-      <h1 id="gift-title">Món quà đang chờ được mở</h1>
+      <h1 id="gift-title">Một bầu trời dành riêng cho Tỷ</h1>
       <p class="gift-instructions" id="ribbon-instructions">
         Kéo dải ruy băng để mở món quà
       </p>
@@ -97,14 +101,14 @@
         Mở quà không cần kéo
       </button>
       <p class="gift-message" id="gift-message" role="status" hidden>
-        Có những ký ức, dù nhỏ bé, vẫn luôn tỏa sáng…
+        Có những ký ức, dù nhỏ bé, vẫn luôn tỏa sáng.
       </p>
       <button class="button gift-enter-button" id="gift-enter-button" type="button" hidden>
         Bước vào bầu trời ký ức
       </button>
     </section>
 
-    <p class="invitation__footnote gift-footnote">Một điều dịu dàng đang chờ được mở ra</p>
+    <p class="invitation__footnote gift-footnote">Những ký ức dàng đang chờ được mở ra</p>
   </main>
 
   <main class="constellation-scene scene" id="constellation-scene"
@@ -112,7 +116,7 @@
     <header class="constellation-header">
       <p class="eyebrow">PHASE 03 · SCORPIUS</p>
       <h1 id="constellation-title">Những vì sao lưu giữ ký ức</h1>
-      <p class="constellation-subtitle">Chạm vào một ngôi sao để bắt đầu hành trình.</p>
+      <p class="constellation-subtitle">Chạm vào những ngôi sao sáng để mở từng mảnh ký ức.</p>
     </header>
 
     <div class="constellation-art" id="constellation-art">
@@ -131,6 +135,10 @@
       <p class="constellation-count" id="constellation-count" role="status" aria-live="polite">
         0 / 9 ký ức đã khám phá
       </p>
+      <button class="constellation-final-wish button button--quiet" id="constellation-final-wish"
+        type="button" aria-label="Mở Những lời chưa nói" hidden>
+        <span aria-hidden="true">✦</span> Những lời chưa nói
+      </button>
       <button class="constellation-next-memory button button--quiet" id="constellation-next-memory" type="button">
         Khám phá ký ức tiếp theo
       </button>
@@ -205,17 +213,8 @@
       </div>
       <div class="final-wish__composition">
         <div class="final-wish__sky">
-          <article class="final-wish__memory" id="final-wish-memory"
-            role="group" aria-label="Một ký ức và lời chúc đang trôi qua">
-            <img id="final-wish-memory-image" alt="">
-            <p id="final-wish-memory-message"></p>
-            <div class="final-wish__particles" aria-hidden="true">
-              <span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span>
-            </div>
-          </article>
           <div class="final-wish__static-wishes" id="final-wish-static-wishes"
-            role="group" aria-label="Các lời chúc và ký ức"></div>
+            role="list" aria-label="Các lời chúc riêng của Tinh Hà Ký Nguyện"></div>
         </div>
         <div class="final-wish__message" id="final-wish-message" aria-live="polite">
           <p class="final-wish__subtitle" id="final-wish-subtitle" hidden></p>

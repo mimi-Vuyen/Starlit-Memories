@@ -40,6 +40,41 @@ button {
   font: inherit;
 }
 
+.music-toggle {
+  position: fixed;
+  z-index: 20;
+  top: max(14px, env(safe-area-inset-top));
+  right: max(14px, env(safe-area-inset-right));
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(240, 197, 168, 0.48);
+  border-radius: 50%;
+  background: rgba(15, 17, 43, 0.72);
+  box-shadow: 0 0 16px rgba(169, 149, 232, 0.14);
+  color: #f0dfb1;
+  cursor: pointer;
+  font-family: "Segoe UI", sans-serif;
+  font-size: 1.15rem;
+  transition: background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.music-toggle:hover {
+  border-color: rgba(244, 223, 172, 0.82);
+  background: rgba(41, 35, 75, 0.9);
+}
+
+.music-toggle:focus-visible {
+  outline: 2px solid #e5d9ff;
+  outline-offset: 3px;
+}
+
+.music-toggle__icon {
+  line-height: 1;
+}
+
 .starfield,
 .ambient-glow {
   position: absolute;
@@ -192,6 +227,14 @@ h1 {
   line-height: 1.35;
   text-wrap: balance;
   text-shadow: 0 0 30px rgba(214, 197, 255, 0.16);
+}
+
+.invitation h1,
+.invitation__message,
+.gift-content h1,
+.gift-instructions,
+.gift-message {
+  font-family: Arial, sans-serif;
 }
 
 .invitation__message {
@@ -811,6 +854,51 @@ h1 {
   display: none;
 }
 
+.constellation-final-wish {
+  width: min(100%, 280px);
+  min-height: 42px;
+  min-width: 0;
+  margin-top: 2px;
+  padding: 9px 18px;
+  border-color: rgba(240, 197, 168, 0.56);
+  background: linear-gradient(135deg, rgba(169, 149, 232, 0.16), rgba(240, 197, 168, 0.08));
+  box-shadow: 0 0 18px rgba(169, 149, 232, 0.12);
+  color: #f0dfb1;
+  font-family: Arial, sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+  transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease,
+    opacity 360ms ease, transform 200ms ease;
+}
+
+.constellation-final-wish[hidden] {
+  display: none;
+}
+
+.constellation-final-wish.is-unlocked {
+  animation: final-wish-button-arrive 500ms ease both;
+}
+
+.constellation-final-wish:hover {
+  border-color: rgba(244, 223, 172, 0.92);
+  background: linear-gradient(135deg, rgba(169, 149, 232, 0.26), rgba(240, 197, 168, 0.16));
+  box-shadow: 0 0 24px rgba(169, 149, 232, 0.24), 0 0 12px rgba(240, 197, 168, 0.12);
+}
+
+.constellation-final-wish span {
+  margin-right: 5px;
+  color: #f4dfac;
+}
+
+.constellation-scene.is-final-wish .constellation-final-wish {
+  display: none;
+}
+
+@keyframes final-wish-button-arrive {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .memory-star-sparkle {
   fill: #f0c5a8;
   opacity: 0;
@@ -1297,6 +1385,10 @@ h1 {
 }
 
 @media (max-width: 760px) {
+  .constellation-final-wish {
+    min-height: 46px;
+  }
+
   .constellation-scene.has-memory-open {
     display: grid;
     width: min(100% - 32px, 520px);
@@ -1340,6 +1432,13 @@ h1 {
   .memory-polaroid__story {
     width: min(100%, 380px);
     padding: 12px 10px 14px;
+  }
+}
+
+@media (max-height: 650px) {
+  .constellation-scene {
+    gap: 8px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 }
 
@@ -1534,7 +1633,7 @@ h1 {
   gap: 10px;
   width: min(100%, 1060px);
   margin: 0 auto;
-  padding: 4px 0 10px;
+  padding: 4px 52px 10px 0;
 }
 
 .final-wish__controls .button {
@@ -1550,7 +1649,6 @@ h1 {
   width: min(100%, 900px);
   min-height: calc(100svh - 96px);
   margin: 0 auto;
-  overflow: hidden;
   align-items: center;
   grid-template-areas: "stage";
 }
@@ -1562,78 +1660,33 @@ h1 {
   pointer-events: none;
 }
 
-.final-wish__memory {
+.final-wish__floating-wish {
   position: absolute;
   z-index: 1;
-  left: var(--wish-lane-x, 50%);
-  bottom: max(var(--wish-lane-bottom, 8%), env(safe-area-inset-bottom));
-  display: grid;
-  width: clamp(112px, 10.2vw, 140px);
-  gap: 7px;
+  left: 50%;
+  top: 0;
+  box-sizing: border-box;
+  width: min(320px, calc(100% - 28px));
   margin: 0;
-  padding: 7px 7px 10px;
-  border: 1px solid rgba(240, 197, 168, 0.52);
-  background: linear-gradient(145deg, #fbf8f0, #f2ecdf);
-  box-shadow: 0 10px 26px rgba(5, 6, 24, 0.36), 0 0 20px rgba(169, 149, 232, 0.2);
+  padding: 11px 14px;
+  border: 1px solid rgba(240, 197, 168, 0.34);
+  border-radius: 14px;
+  background: rgba(15, 17, 43, 0.72);
+  box-shadow: 0 8px 24px rgba(5, 6, 24, 0.28), 0 0 18px rgba(169, 149, 232, 0.16);
+  color: #e8def8;
+  font-family: "Noto Serif", Georgia, "Times New Roman", serif;
+  font-size: clamp(0.82rem, 1.5vw, 0.98rem);
+  line-height: 1.55;
+  text-align: center;
   opacity: 0;
   visibility: hidden;
-  transform: rotate(1.5deg);
   will-change: transform, opacity;
 }
 
-#final-wish-memory {
-  display: none;
+.final-wish__floating-wish.is-floating {
+  visibility: visible;
+  animation: wish-text-drift var(--wish-duration, 8s) ease-in-out both;
 }
-
-.final-wish__memory img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 3 / 4;
-  object-fit: contain;
-  background: var(--memory-midnight, #0b0d23);
-}
-
-.final-wish__memory > p {
-  min-height: 2.6em;
-  margin: 0;
-  color: #44384b;
-  font-family: "Noto Serif", Georgia, "Times New Roman", serif;
-  font-size: clamp(0.65rem, 1.4vw, 0.8rem);
-  line-height: 1.35;
-  text-align: center;
-}
-
-.final-wish__particles {
-  position: absolute;
-  inset: 35% 20%;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.final-wish__memory.is-floating .final-wish__particles {
-  opacity: 1;
-}
-
-.final-wish__particles span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: #f4dfac;
-  box-shadow: 0 0 7px rgba(244, 223, 172, 0.8);
-  transform: translate(-50%, -50%);
-}
-
-.final-wish__particles span:nth-child(1) { --particle-x: -28px; --particle-y: -42px; }
-.final-wish__particles span:nth-child(2) { --particle-x: 36px; --particle-y: -32px; }
-.final-wish__particles span:nth-child(3) { --particle-x: 48px; --particle-y: 8px; }
-.final-wish__particles span:nth-child(4) { --particle-x: 28px; --particle-y: 42px; }
-.final-wish__particles span:nth-child(5) { --particle-x: -42px; --particle-y: 30px; }
-.final-wish__particles span:nth-child(6) { --particle-x: -48px; --particle-y: -5px; }
-.final-wish__particles span:nth-child(7) { --particle-x: 4px; --particle-y: -52px; }
-.final-wish__particles span:nth-child(8) { --particle-x: -4px; --particle-y: 52px; }
 
 .final-wish__static-wishes {
   display: none;
@@ -1684,19 +1737,11 @@ h1 {
   color: #f0c5a8;
   font-size: clamp(0.92rem, 2.1vw, 1.08rem);
   font-style: italic;
+  white-space: pre-line;
 }
 
 .final-wish__subtitle[hidden] {
   display: none;
-}
-
-.constellation-scene.is-final-wish-gallery .final-wish__memory.is-floating {
-  visibility: visible;
-  animation: wish-memory-drift var(--wish-duration, 14s) cubic-bezier(0.42, 0, 0.58, 1) both;
-}
-
-.constellation-scene.is-final-wish-gallery .final-wish__memory.is-floating .final-wish__particles span {
-  animation: wish-particle-drift 1.7s ease-out var(--wish-dissolve-delay, 11s) both;
 }
 
 .constellation-scene.is-final-wish-revealed .final-wish__message {
@@ -1724,31 +1769,11 @@ h1 {
   100% { filter: drop-shadow(0 0 8px rgba(244, 223, 172, 0.86)); }
 }
 
-@keyframes wish-memory-drift {
-  0% { opacity: 0; transform: translate3d(-50%, 16svh, 0) rotate(-1.8deg) scale(0.95); }
-  12% { opacity: 0.95; }
-  30% { transform: translate3d(calc(-50% + var(--wish-path-offset, 0px)), 0, 0) rotate(0.6deg) scale(1); }
-  56% { transform: translate3d(calc(-50% - var(--wish-path-offset, 0px)), -28svh, 0) rotate(1.4deg) scale(1); }
-  78% { opacity: 0.9; transform: translate3d(calc(-50% + var(--wish-path-offset, 0px)), -57svh, 0) rotate(-0.7deg) scale(0.98); }
-  100% { opacity: 0; transform: translate3d(-50%, -82svh, 0) rotate(1.2deg) scale(0.94); }
-}
-
-@keyframes wish-memory-drift-mobile {
-  0% { opacity: 0; transform: translate3d(-50%, 3svh, 0) rotate(-1.5deg) scale(0.95); }
-  12% { opacity: 0.95; }
-  30% { transform: translate3d(calc(-50% + var(--wish-path-offset, 0px)), 0, 0) rotate(0.5deg) scale(1); }
-  56% { transform: translate3d(calc(-50% - var(--wish-path-offset, 0px)), -4svh, 0) rotate(1.2deg) scale(1); }
-  78% { opacity: 0.9; transform: translate3d(calc(-50% + var(--wish-path-offset, 0px)), -8svh, 0) rotate(-0.6deg) scale(0.98); }
-  100% { opacity: 0; transform: translate3d(-50%, -12svh, 0) rotate(1deg) scale(0.94); }
-}
-
-@keyframes wish-particle-drift {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
-  15% { opacity: 1; }
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% + var(--particle-x)), calc(-50% + var(--particle-y))) scale(0.2);
-  }
+@keyframes wish-text-drift {
+  0% { opacity: 0; transform: translate3d(-50%, 28px, 0); }
+  10% { opacity: 0.94; transform: translate3d(-50%, 0, 0); }
+  88% { opacity: 0.94; transform: translate3d(-50%, 0, 0); }
+  100% { opacity: 0; transform: translate3d(-50%, 0, 0); }
 }
 
 @media (max-width: 760px) {
@@ -1770,10 +1795,12 @@ h1 {
 
   .final-wish__controls {
     justify-content: center;
+    flex-wrap: wrap;
     gap: 8px;
   }
 
   .final-wish__controls .button {
+    min-width: 0;
     padding-inline: 10px;
     font-size: 0.78rem;
   }
@@ -1782,11 +1809,12 @@ h1 {
     width: 100%;
     min-height: calc(100svh - 110px);
     height: calc(100svh - 110px);
-    overflow: hidden;
   }
 
-  .final-wish__memory {
-    width: clamp(100px, 28vw, 116px);
+  .final-wish__floating-wish {
+    width: min(320px, calc(100% - 28px));
+    padding: 9px 11px;
+    font-size: 0.78rem;
   }
 
   .final-wish__message {
@@ -1807,9 +1835,6 @@ h1 {
     line-height: 1.5;
   }
 
-  .constellation-scene.is-final-wish-gallery .final-wish__memory.is-floating {
-    animation-name: wish-memory-drift-mobile;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1840,39 +1865,28 @@ h1 {
     order: 2;
   }
 
-  .constellation-scene.is-final-wish .final-wish__memory {
+  .constellation-scene.is-final-wish .final-wish__floating-wish {
     display: none;
   }
 
   .constellation-scene.is-final-wish .final-wish__static-wishes {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-    gap: 12px;
+    display: flex;
+    max-width: 600px;
+    margin: 0 auto;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .constellation-scene.is-final-wish .final-wish__static-item {
-    min-width: 0;
     margin: 0;
-    padding: 6px 6px 8px;
-    border: 1px solid rgba(240, 197, 168, 0.42);
-    background: linear-gradient(145deg, #fbf8f0, #f2ecdf);
-    box-shadow: 0 6px 16px rgba(5, 6, 24, 0.28);
-  }
-
-  .constellation-scene.is-final-wish .final-wish__static-item img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: contain;
-    background: var(--memory-midnight, #0b0d23);
-  }
-
-  .constellation-scene.is-final-wish .final-wish__static-item figcaption {
-    padding-top: 7px;
-    color: #44384b;
+    padding: 9px 12px;
+    border: 1px solid rgba(240, 197, 168, 0.28);
+    border-radius: 10px;
+    background: rgba(15, 17, 43, 0.64);
+    color: #e8def8;
     font-family: "Noto Serif", Georgia, "Times New Roman", serif;
-    font-size: 0.76rem;
-    line-height: 1.45;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .constellation-scene.is-final-wish .final-wish__message {
